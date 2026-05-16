@@ -42,6 +42,20 @@ export const noteIdParamSchema = z.object({
     })
 });
 
+export const shareNoteSchema = z.object({
+    params: z.object({
+        id: z.string().uuid("Invalid note id")
+    }),
+
+    body: z.object({
+        share_with_email: z
+            .string()
+            .trim()
+            .email("share_with_email must be a valid email")
+            .toLowerCase()
+    })
+});
+
 export const listNotesSchema = z.object({
     query: z.object({
         page: z

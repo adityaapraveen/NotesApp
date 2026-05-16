@@ -1,8 +1,9 @@
 import {
     createNote,
     deleteOwnedNote,
+    getAccessibleNoteById,
     getNotesForUser,
-    getOwnedNoteById,
+    shareOwnedNote,
     updateOwnedNote
 } from "../services/note.service.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -28,7 +29,7 @@ export const getNotesHandler = asyncHandler(async (req, res) => {
 });
 
 export const getNoteByIdHandler = asyncHandler(async (req, res) => {
-    const note = await getOwnedNoteById({
+    const note = await getAccessibleNoteById({
         userId: req.user.id,
         noteId: req.validated.params.id
     });
@@ -54,4 +55,14 @@ export const deleteNoteHandler = asyncHandler(async (req, res) => {
     });
 
     return res.status(204).send();
+});
+
+export const shareNoteHandler = asyncHandler(async (req, res) => {
+    const result = await shareOwnedNote({
+        ownerId: req.user.id,
+        noteId: req.validated.params.id,
+        shareWithEmail: req.validated.body.share_with_email
+    });
+
+    return res.status(200).json(result);
 });

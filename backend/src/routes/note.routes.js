@@ -4,6 +4,7 @@ import {
     deleteNoteHandler,
     getNoteByIdHandler,
     getNotesHandler,
+    shareNoteHandler,
     updateNoteHandler
 } from "../controllers/note.controller.js";
 import { requireAuth } from "../middlewares/auth.middleware.js";
@@ -12,6 +13,7 @@ import {
     createNoteSchema,
     listNotesSchema,
     noteIdParamSchema,
+    shareNoteSchema,
     updateNoteSchema
 } from "../validators/note.schema.js";
 
@@ -40,6 +42,13 @@ router.delete(
     requireAuth,
     validate(noteIdParamSchema),
     deleteNoteHandler
+);
+
+router.post(
+    "/notes/:id/share",
+    requireAuth,
+    validate(shareNoteSchema),
+    shareNoteHandler
 );
 
 export default router;

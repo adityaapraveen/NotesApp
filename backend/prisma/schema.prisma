@@ -13,7 +13,8 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  notes Note[]
+  notes        Note[]
+  sharedNotes  NoteShare[]
 
   @@map("users")
 }
@@ -27,9 +28,25 @@ model Note {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner  User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  shares NoteShare[]
 
   @@index([ownerId])
   @@index([ownerId, deletedAt])
   @@map("notes")
+}
+
+model NoteShare {
+  id               String   @id @default(uuid())
+  noteId           String
+  sharedWithUserId String
+  createdAt        DateTime @default(now())
+
+  note           Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  sharedWithUser User @relation(fields: [sharedWithUserId], references: [id], onDelete: Cascade)
+
+  @@unique([noteId, sharedWithUserId])
+  @@index([sharedWithUserId])
+  @@index([noteId])
+  @@map("note_shares")
 }

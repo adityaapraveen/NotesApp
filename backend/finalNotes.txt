@@ -1,0 +1,3 @@
+=>  Need to keep in mind the tests are done automatic so I need to 
+    allow more requests in any amount of time. RATELIMITERS.    
+

@@ -6,6 +6,8 @@ import { config } from "./config/config.js";
 import { generalRateLimiter } from "./middlewares/rateLimit.middleware.js";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { authRateLimiter } from "./middlewares/rateLimit.middleware.js";
+import authRoutes from "./routes/auth.routes.js"
 
 import metaRoutes from "./routes/meta.routes.js";
 
@@ -26,6 +28,7 @@ app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 app.use(generalRateLimiter);
 
 app.use(metaRoutes);
+app.use(authRateLimiter, authRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

@@ -9,7 +9,18 @@ const envSchema = z.object({
 
     DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
 
-    CORS_ORIGIN: z.string().default("*")
+    CORS_ORIGIN: z.string().default("*"),
+    JWT_ACCESS_SECRET: z
+        .string()
+        .min(32, "JWT_ACCESS_SECRET must be at least 32 characters"),
+
+    JWT_ACCESS_EXPIRES_IN: z.string().default("1h"),
+
+    BCRYPT_SALT_ROUNDS: z
+        .string()
+        .default("12")
+        .transform((value) => Number(value))
+        .pipe(z.number().int().min(10).max(15))
 })
 
 const parsed = envSchema.safeParse(process.env)

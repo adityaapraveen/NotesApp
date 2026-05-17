@@ -1,0 +1,21 @@
+.share-modal {
+  max-width: 440px;
+}
+
+.share-note-title {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-5);
+}
+
+.share-note-title strong {
+  color: var(--color-text-primary);
+}
+
+.share-success {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  color: var(--color-green-light);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+}

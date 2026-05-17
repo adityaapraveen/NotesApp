@@ -15,14 +15,13 @@ export const getAbout = asyncHandler(async (req, res) => {
         name: "Aditya Praveen",
         email: "adityaapraveenn18@gmail.com",
         "my features": {
-            "Memory Graph":
-                "Automatically connects related notes using embeddings and vector similarity. I chose this because it turns a normal CRUD notes app into a second-brain style knowledge system, And using these vector embeddings i could build so many more features later like RAG, semantic search, to learn about the user on what kind of person he is etc",
-            "Pagination":
-                "Keeps the notes API efficient when users have many notes.",
-            "Full-text Search":
-                "Helps users quickly find notes by title or content.",
-            "Docker":
-                "Makes the backend easier to run and deploy consistently."
+            "Memory Graph": "Automatically connects related notes using embeddings and vector similarity. I chose this because it turns a basic CRUD notes app into a second-brain style knowledge system where users can discover relationships between their ideas. This also creates a strong foundation for future features like semantic search, RAG-based question answering, personalized knowledge retrieval, and intelligent note recommendations.",
+
+            "Pagination": "Improves performance and scalability by returning notes in smaller chunks instead of loading every note at once. I chose this because real users can have hundreds or thousands of notes, and paginated APIs are safer for the database, backend, and frontend.",
+
+            "Full-text Search": "Allows users to quickly find notes by matching keywords across note titles and content. I chose this because search is one of the most important features in a notes product, especially as the number of notes grows.",
+
+            "Docker": "Makes the backend easier to run, test, and deploy consistently across different environments. I chose this because Docker reduces setup issues and keeps local development closer to production."
         }
     });
 });

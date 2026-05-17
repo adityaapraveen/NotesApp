@@ -19,14 +19,15 @@ export const createNoteHandler = asyncHandler(async (req, res) => {
 });
 
 export const getNotesHandler = asyncHandler(async (req, res) => {
+    const hasPaginationQuery =
+        typeof req.query.page !== "undefined" || typeof req.query.limit !== "undefined";
+
     const result = await getNotesForUser({
         userId: req.user.id,
         page: req.validated.query.page,
-        limit: req.validated.query.limit
+        limit: req.validated.query.limit,
+        paginate: hasPaginationQuery
     });
-
-    const hasPaginationQuery =
-        typeof req.query.page !== "undefined" || typeof req.query.limit !== "undefined";
 
     if (!hasPaginationQuery) {
         return res.status(200).json(result.data);

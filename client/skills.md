@@ -1,0 +1,1 @@
+Before writing code, look for any file named skills.md, SKILLS.md, .cursorrules, CLAUDE.md, AGENTS.md, README.md, or project instructions. Read them first and follow them. If they conflict with this prompt, prioritize the project-specific file unless it would break the requested frontend.

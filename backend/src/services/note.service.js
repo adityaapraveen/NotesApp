@@ -55,9 +55,7 @@ export const createNote = async ({ userId, title, content }) => {
     return mapNoteResponse(note);
 };
 
-export const getNotesForUser = async ({ userId, page, limit }) => {
-    const { skip, take } = getPagination({ page, limit });
-
+export const getNotesForUser = async ({ userId, page, limit, paginate = false }) => {
     const where = {
         deletedAt: null,
         OR: [
@@ -74,6 +72,8 @@ export const getNotesForUser = async ({ userId, page, limit }) => {
         ]
     };
 
+    const paginationOptions = paginate ? getPagination({ page, limit }) : {};
+
     const [notes, total] = await prisma.$transaction([
         prisma.note.findMany({
             where,
@@ -89,8 +89,7 @@ export const getNotesForUser = async ({ userId, page, limit }) => {
             orderBy: {
                 updatedAt: "desc"
             },
-            skip,
-            take
+            ...paginationOptions
         }),
 
         prisma.note.count({

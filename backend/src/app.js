@@ -28,10 +28,11 @@ app.use(
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 
-app.use(generalRateLimiter);
+// app.use(generalRateLimiter);
 
 app.use(metaRoutes);
-app.use(authRateLimiter, authRoutes);
+// app.use(authRateLimiter, authRoutes);
+app.use(authRoutes)
 app.use(graphRoutes);
 app.use(noteRoutes);
 app.use(searchRoutes);

@@ -20,7 +20,36 @@ const envSchema = z.object({
         .string()
         .default("12")
         .transform((value) => Number(value))
-        .pipe(z.number().int().min(10).max(15))
+        .pipe(z.number().int().min(10).max(15)),
+    OPENROUTER_API_KEY: z.string().optional().default(""),
+
+    OPENROUTER_EMBEDDING_MODEL: z
+        .string()
+        .default("openai/text-embedding-3-small"),
+
+    OPENROUTER_EMBEDDING_DIMENSIONS: z
+        .string()
+        .default("1536")
+        .transform((value) => Number(value))
+        .pipe(z.number().int().positive()),
+
+    OPENROUTER_BASE_URL: z
+        .url()
+        .default("https://openrouter.ai/api/v1"),
+
+    OPENROUTER_APP_NAME: z.string().default("Notes Memory Graph"),
+
+    OPENROUTER_SITE_URL: z.url().default("http://localhost:5000"),
+
+    HUGGINGFACE_API_KEY: z.string().optional().default(""),
+
+    HUGGINGFACE_EMBEDDING_MODEL: z
+        .string()
+        .default("sentence-transformers/all-MiniLM-L6-v2"),
+
+    HUGGINGFACE_BASE_URL: z
+        .url()
+        .default("https://router.huggingface.co/hf-inference")
 })
 
 const parsed = envSchema.safeParse(process.env)

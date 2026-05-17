@@ -3,3 +3,6 @@
 
 => can i do search without pagination? maybe the bot that does automated tests
     may not check for pagination or it might check, need to figure it out.
+
+=> Using JSON instead of pgvector because im not sure if those free hosting services
+    allow to host pgvector setup

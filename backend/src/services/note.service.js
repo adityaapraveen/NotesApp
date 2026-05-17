@@ -1,11 +1,12 @@
 import { prisma } from "../config/prisma.js";
 import { AppError } from "../utils/AppError.js";
+import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
 import {
     mapAccessibleNoteResponse,
-    mapNoteListItemResponse,
-    mapNoteResponse
+    mapNoteResponse,
+    mapNoteListItemResponse
 } from "../utils/noteResponse.js";
-import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
+import { safelyUpsertNoteEmbedding } from "./embedding.service.js";
 
 const noteResponseSelect = {
     id: true,
@@ -31,7 +32,16 @@ export const createNote = async ({ userId, title, content }) => {
             content,
             ownerId: userId
         },
-        select: noteResponseSelect
+        select: {
+            ...noteResponseSelect,
+            ownerId: true
+        }
+    });
+
+    await safelyUpsertNoteEmbedding({
+        noteId: note.id,
+        title: note.title,
+        content: note.content
     });
 
     return mapNoteResponse(note);
@@ -142,7 +152,16 @@ export const updateOwnedNote = async ({ userId, noteId, title, content }) => {
             title,
             content
         },
-        select: noteResponseSelect
+        select: {
+            ...noteResponseSelect,
+            ownerId: true
+        }
+    });
+
+    await safelyUpsertNoteEmbedding({
+        noteId: updatedNote.id,
+        title: updatedNote.title,
+        content: updatedNote.content
     });
 
     return mapNoteResponse(updatedNote);

@@ -13,8 +13,8 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  notes        Note[]
-  sharedNotes  NoteShare[]
+  notes       Note[]
+  sharedNotes NoteShare[]
 
   @@map("users")
 }
@@ -28,8 +28,9 @@ model Note {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  owner  User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  shares NoteShare[]
+  owner     User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  shares    NoteShare[]
+  embedding NoteEmbedding?
 
   @@index([ownerId])
   @@index([ownerId, deletedAt])
@@ -49,4 +50,19 @@ model NoteShare {
   @@index([sharedWithUserId])
   @@index([noteId])
   @@map("note_shares")
+}
+
+model NoteEmbedding {
+  id        String   @id @default(uuid())
+  noteId    String   @unique
+  model     String
+  dimension Int
+  vector    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@index([noteId])
+  @@map("note_embeddings")
 }

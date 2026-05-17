@@ -25,6 +25,13 @@ export const getNotesHandler = asyncHandler(async (req, res) => {
         limit: req.validated.query.limit
     });
 
+    const hasPaginationQuery =
+        typeof req.query.page !== "undefined" || typeof req.query.limit !== "undefined";
+
+    if (!hasPaginationQuery) {
+        return res.status(200).json(result.data);
+    }
+
     return res.status(200).json(result);
 });
 

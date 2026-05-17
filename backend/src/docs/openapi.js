@@ -31,6 +31,10 @@ export const openApiDocument = {
         {
             name: "Search",
             description: "Search accessible notes"
+        },
+        {
+            name: "Memory Graph",
+            description: "Semantic relationships between notes"
         }
     ],
 
@@ -212,7 +216,100 @@ export const openApiDocument = {
                     }
                 }
             },
+            GraphNode: {
+                type: "object",
+                properties: {
+                    id: {
+                        type: "string",
+                        format: "uuid"
+                    },
+                    title: {
+                        type: "string"
+                    },
+                    preview: {
+                        type: "string"
+                    },
+                    access: {
+                        type: "string",
+                        enum: ["owner", "shared"]
+                    },
+                    created_at: {
+                        type: "string",
+                        format: "date-time"
+                    },
+                    updated_at: {
+                        type: "string",
+                        format: "date-time"
+                    }
+                }
+            },
 
+            GraphEdge: {
+                type: "object",
+                properties: {
+                    id: {
+                        type: "string",
+                        format: "uuid"
+                    },
+                    source: {
+                        type: "string",
+                        format: "uuid"
+                    },
+                    target: {
+                        type: "string",
+                        format: "uuid"
+                    },
+                    strength: {
+                        type: "number",
+                        example: 0.8123
+                    },
+                    reason: {
+                        type: "string"
+                    }
+                }
+            },
+
+            MemoryGraphResponse: {
+                type: "object",
+                properties: {
+                    nodes: {
+                        type: "array",
+                        items: {
+                            $ref: "#/components/schemas/GraphNode"
+                        }
+                    },
+                    edges: {
+                        type: "array",
+                        items: {
+                            $ref: "#/components/schemas/GraphEdge"
+                        }
+                    }
+                }
+            },
+
+            RebuildGraphResponse: {
+                type: "object",
+                properties: {
+                    message: {
+                        type: "string",
+                        example: "Memory graph rebuilt successfully"
+                    },
+                    note_id: {
+                        type: "string",
+                        format: "uuid"
+                    },
+                    connections_created: {
+                        type: "integer",
+                        example: 2
+                    },
+                    connections: {
+                        type: "array",
+                        items: {
+                            type: "object"
+                        }
+                    }
+                }
+            },
             NoteListItem: {
                 type: "object",
                 properties: {
@@ -494,7 +591,90 @@ export const openApiDocument = {
                 }
             }
         },
+        "/notes/graph": {
+            get: {
+                tags: ["Notes"],
+                summary: "Get memory graph for accessible notes",
+                description:
+                    "Returns graph nodes and edges for notes the authenticated user can access.",
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
+                parameters: [
+                    {
+                        name: "min_strength",
+                        in: "query",
+                        required: false,
+                        schema: {
+                            type: "number",
+                            default: 0,
+                            minimum: 0,
+                            maximum: 1
+                        }
+                    }
+                ],
+                responses: {
+                    200: {
+                        description: "Memory graph returned successfully",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/MemoryGraphResponse"
+                                }
+                            }
+                        }
+                    },
+                    401: {
+                        description: "Unauthorized"
+                    }
+                }
+            }
+        },
 
+        "/notes/{id}/graph/rebuild": {
+            post: {
+                tags: ["Notes"],
+                summary: "Rebuild memory graph connections for one note",
+                description:
+                    "Recomputes semantic note connections for an owned note using stored embeddings.",
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
+                parameters: [
+                    {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        schema: {
+                            type: "string",
+                            format: "uuid"
+                        }
+                    }
+                ],
+                responses: {
+                    200: {
+                        description: "Memory graph rebuilt successfully",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/RebuildGraphResponse"
+                                }
+                            }
+                        }
+                    },
+                    400: {
+                        description: "Embedding missing"
+                    },
+                    404: {
+                        description: "Note not found"
+                    }
+                }
+            }
+        },
         "/notes": {
             get: {
                 tags: ["Notes"],
@@ -527,11 +707,22 @@ export const openApiDocument = {
                 ],
                 responses: {
                     200: {
-                        description: "Paginated list of owned and shared notes",
+                        description:
+                            "List of accessible notes. Returns a plain array when pagination query is not provided, and a paginated object when page or limit is provided.",
                         content: {
                             "application/json": {
                                 schema: {
-                                    $ref: "#/components/schemas/PaginatedNotesResponse"
+                                    oneOf: [
+                                        {
+                                            type: "array",
+                                            items: {
+                                                $ref: "#/components/schemas/NoteListItem"
+                                            }
+                                        },
+                                        {
+                                            $ref: "#/components/schemas/PaginatedNotesResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }

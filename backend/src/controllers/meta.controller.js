@@ -4,7 +4,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 export const healthCheck = asyncHandler(async (req, res) => {
     return res.status(200).json({
         status: "ok",
-        service: "notesApp-backend"
+        service: "notesApp-backend",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
     });
 });
 

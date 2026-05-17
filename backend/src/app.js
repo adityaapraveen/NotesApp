@@ -11,6 +11,7 @@ import { authRateLimiter, generalRateLimiter } from "./middlewares/rateLimit.mid
 import authRoutes from "./routes/auth.routes.js"
 import metaRoutes from "./routes/meta.routes.js";
 import noteRoutes from "./routes/note.routes.js";
+import searchRoutes from "./routes/search.routes.js"
 
 export const app = express();
 
@@ -31,7 +32,7 @@ app.use(generalRateLimiter);
 app.use(metaRoutes);
 app.use(authRateLimiter, authRoutes);
 app.use(noteRoutes);
-
+app.use(searchRoutes)
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

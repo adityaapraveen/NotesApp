@@ -7,6 +7,7 @@ import {
     mapNoteListItemResponse
 } from "../utils/noteResponse.js";
 import { safelyUpsertNoteEmbedding } from "./embedding.service.js";
+import { safelyRebuildConnectionsForNote } from "./graph.service.js";
 
 const noteResponseSelect = {
     id: true,
@@ -38,11 +39,18 @@ export const createNote = async ({ userId, title, content }) => {
         }
     });
 
-    await safelyUpsertNoteEmbedding({
+    const embedding = await safelyUpsertNoteEmbedding({
         noteId: note.id,
         title: note.title,
         content: note.content
     });
+
+    if (embedding) {
+        await safelyRebuildConnectionsForNote({
+            userId,
+            noteId: note.id
+        });
+    }
 
     return mapNoteResponse(note);
 };
@@ -158,11 +166,18 @@ export const updateOwnedNote = async ({ userId, noteId, title, content }) => {
         }
     });
 
-    await safelyUpsertNoteEmbedding({
+    const embedding = await safelyUpsertNoteEmbedding({
         noteId: updatedNote.id,
         title: updatedNote.title,
         content: updatedNote.content
     });
+
+    if (embedding) {
+        await safelyRebuildConnectionsForNote({
+            userId,
+            noteId: updatedNote.id
+        });
+    }
 
     return mapNoteResponse(updatedNote);
 };

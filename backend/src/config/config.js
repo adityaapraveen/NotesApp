@@ -49,7 +49,18 @@ const envSchema = z.object({
 
     HUGGINGFACE_BASE_URL: z
         .url()
-        .default("https://router.huggingface.co/hf-inference")
+        .default("https://router.huggingface.co/hf-inference"),
+    MEMORY_GRAPH_SIMILARITY_THRESHOLD: z
+        .string()
+        .default("0.72")
+        .transform((value) => Number(value))
+        .pipe(z.number().min(0).max(1)),
+
+    MEMORY_GRAPH_MAX_CONNECTIONS: z
+        .string()
+        .default("5")
+        .transform((value) => Number(value))
+        .pipe(z.number().int().positive().max(20))
 })
 
 const parsed = envSchema.safeParse(process.env)

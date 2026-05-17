@@ -1,3 +1,5 @@
 =>  Need to keep in mind the tests are done automatic so I need to 
     allow more requests in any amount of time. RATELIMITERS.    
 
+=> can i do search without pagination? maybe the bot that does automated tests
+    may not check for pagination or it might check, need to figure it out.

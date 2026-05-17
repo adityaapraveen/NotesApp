@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma.js";
+import { mapNoteListItemResponse } from "../utils/noteResponse.js";
 import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
 
 export const searchAccessibleNotes = async ({ userId, query, page, limit }) => {
@@ -71,18 +72,7 @@ export const searchAccessibleNotes = async ({ userId, query, page, limit }) => {
     ]);
 
     return {
-        data: notes.map((note) => ({
-            id: note.id,
-            title: note.title,
-            content: note.content,
-            createdAt: note.createdAt,
-            updatedAt: note.updatedAt,
-            access: note.ownerId === userId ? "owner" : "shared",
-            owner: {
-                id: note.owner.id,
-                email: note.owner.email
-            }
-        })),
+        data: notes.map((note) => mapNoteListItemResponse(note, userId)),
         pagination: buildPaginationMeta({
             page,
             limit,

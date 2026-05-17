@@ -1,5 +1,10 @@
 import { prisma } from "../config/prisma.js";
 import { AppError } from "../utils/AppError.js";
+import {
+    mapAccessibleNoteResponse,
+    mapNoteListItemResponse,
+    mapNoteResponse
+} from "../utils/noteResponse.js";
 import { buildPaginationMeta, getPagination } from "../utils/pagination.js";
 
 const noteResponseSelect = {
@@ -19,16 +24,6 @@ const noteWithAccessSelect = {
     updatedAt: true
 };
 
-const formatNoteResponse = (note) => {
-    return {
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        createdAt: note.createdAt,
-        updatedAt: note.updatedAt
-    };
-};
-
 export const createNote = async ({ userId, title, content }) => {
     const note = await prisma.note.create({
         data: {
@@ -39,7 +34,7 @@ export const createNote = async ({ userId, title, content }) => {
         select: noteResponseSelect
     });
 
-    return note;
+    return mapNoteResponse(note);
 };
 
 export const getNotesForUser = async ({ userId, page, limit }) => {
@@ -86,18 +81,7 @@ export const getNotesForUser = async ({ userId, page, limit }) => {
     ]);
 
     return {
-        data: notes.map((note) => ({
-            id: note.id,
-            title: note.title,
-            content: note.content,
-            createdAt: note.createdAt,
-            updatedAt: note.updatedAt,
-            access: note.ownerId === userId ? "owner" : "shared",
-            owner: {
-                id: note.owner.id,
-                email: note.owner.email
-            }
-        })),
+        data: notes.map((note) => mapNoteListItemResponse(note, userId)),
         pagination: buildPaginationMeta({
             page,
             limit,
@@ -131,10 +115,7 @@ export const getAccessibleNoteById = async ({ userId, noteId }) => {
         throw new AppError("Note not found", 404);
     }
 
-    return {
-        ...formatNoteResponse(note),
-        access: note.ownerId === userId ? "owner" : "shared"
-    };
+    return mapAccessibleNoteResponse(note, userId);
 };
 
 export const updateOwnedNote = async ({ userId, noteId, title, content }) => {
@@ -164,7 +145,7 @@ export const updateOwnedNote = async ({ userId, noteId, title, content }) => {
         select: noteResponseSelect
     });
 
-    return updatedNote;
+    return mapNoteResponse(updatedNote);
 };
 
 export const deleteOwnedNote = async ({ userId, noteId }) => {

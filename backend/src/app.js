@@ -5,7 +5,7 @@ import helmet from "helmet";
 import { config } from "./config/config.js";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
-import { authRateLimiter, generalRateLimiter } from "./middlewares/rateLimit.middleware.js";
+// import { authRateLimiter, generalRateLimiter } from "./middlewares/rateLimit.middleware.js";
 
 
 import authRoutes from "./routes/auth.routes.js"
